@@ -1,12 +1,14 @@
+# "Velho" Makefile for Linux/Unix
+
 # SDL
 SDLFLAGS = `sdl-config --cflags`
 SDLLIBS =`sdl-config --libs`
 
-# LIBLO (OSC)
+# LibLO (OSC)
 LIBLOFLAGS = `pkg-config liblo --cflags`
 LIBLOLIBS = `pkg-config liblo --libs`
 
-# General Build Opts
+# General build opts
 BUILDOPTS = -O2 -Wall -Isrc
 
 # ---- stuff ----
@@ -33,6 +35,6 @@ draw.o: draw.c
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
 
 clean:
-	rm -rf velho *.o
+	rm -rf velho velho.exe stdout.txt stderr.txt *.o
 
 
