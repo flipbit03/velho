@@ -1,0 +1,32 @@
+# sdl-config gets installed by the w32-mingw pack, yay!
+SDLFLAGS = `sdl-config --cflags`
+SDLLIBS =`sdl-config --libs`
+
+# LibLO (needs pthreads-win32)
+# no PKG-config so putting stuff here manually, change as needed.
+LIBLOSTATIC = /usr/local/lib/liblo.a 
+LIBLOLIBS = -lpthread
+LIBLOFLAGS = -I/usr/local/include
+
+# MinGW
+MINGWLIBS = -lws2_32
+
+# General build opts
+BUILDOPTS = -O2 -Wall
+
+program: main.o draw.o oscstuff.o
+	gcc -O2 -o velho main.o draw.o oscstuff.o $(LIBLOSTATIC) $(LIBLOLIBS) $(SDLLIBS) $(MINGWLIBS)
+	strip velho.exe
+
+main.o: main.c
+	gcc -c main.c $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
+
+oscstuff.o: oscstuff.c oscstuff.h
+	gcc -c oscstuff.c $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
+
+draw.o: draw.c draw.h
+	gcc -c draw.c $(BUILDOPTS) $(SDLFLAGS)
+
+clean:
+	rm -f *.o
+	rm -rf velho.exe
