@@ -88,14 +88,8 @@ Author:
 
 	q	Quits Velho.
 
-- Talking to Velho:
+- Communicating with Velho via OSC:
 
-	Velho accepts these commands through the OSC server:
+	Read doc/osccommands.txt 
 
-	i = 32bit integer (OSC Type)
-
-	OSC Path	OSC Arg Types	Parameters	Comment
-	/draw		iiiii		X Y R G B	Draws a point on the X-Y position on the current grid, using color R-G-B
-	/chgrect	ii		X Y		Changes the size of each rectangle drawn to X-Y
-	/clear		iii		R G B		Clears the whole screen to color R-G-B
 
