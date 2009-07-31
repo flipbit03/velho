@@ -1,0 +1,15 @@
+Velho accepts these commands through OSC:
+
+i = 32bit integer (OSC Type)
+
+OSC Path	OSC Arg Types	Parameters		Comment
+/draw		iiiii		X Y R G B		Draws at X-Y position of grid, 
+							using R G B as color.
+
+/drawarea	iiiiiii		X1 Y1 X2 Y2 R G B	Draws from X1-Y1 to X2-Y2 in the grid,
+							using R G B as color.
+
+/chgrect	ii		X Y			Changes grid size to X Y.
+
+/clear		iii		R G B			Paints the whole screen with color R G B.
+
