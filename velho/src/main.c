@@ -10,7 +10,7 @@
 #include "oscstuff.h"
 
 #define PROGNAME "Velho"
-#define PROGVERSION "0.6"
+#define PROGVERSION "0.7"
 
 // Main vars/configs
 Uint8 run = 1;
