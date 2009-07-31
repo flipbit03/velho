@@ -10,33 +10,44 @@
 // OSC Server Handlers
 
 /* clrscr
-	you can choose the color which the screen will be cleared.
-	argv[0]->i --> R (0-255)
-	argv[1]->i --> G (0-255)
-	argv[2]->i --> B (0-255) */
+argv[0]->i --> R (0-255)
+argv[1]->i --> G (0-255)
+argv[2]->i --> B (0-255) */
 int clearscreen_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
 {
 	c_clearscreen(screen, argv[0]->i, argv[1]->i, argv[2]->i);
+	return 0;
+}
 
+/* drawarea
+argv[0]->i --> X1
+argv[1]->i --> Y1
+argv[2]->i --> X2
+argv[3]->i --> Y2
+argv[4]->i --> R (0-255)
+argv[5]->i --> G (0-255)
+argv[6]->i --> B (0-255) */
+int drawarea_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
+{
+	c_drawarea(screen, argv[0]->i, argv[1]->i, argv[2]->i, argv[3]->i, argv[4]->i, argv[5]->i, argv[6]->i);
 	return 0;
 }
 
 /* draw
-	argv[0]->i --> X (0-screenxres/rectx)
-	argv[1]->i --> Y (0-screenyres/recty)
-	argv[2]->i --> R (0-255)
-	argv[3]->i --> G (0-255)
-	argv[4]->i --> B (0-255) */
+argv[0]->i --> X (0-screenxres/rectx)
+argv[1]->i --> Y (0-screenyres/recty)
+argv[2]->i --> R (0-255)
+argv[3]->i --> G (0-255)
+argv[4]->i --> B (0-255) */
 int draw_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
 {
-	c_drawrectangle(screen, argv[0]->i % gridx, argv[1]->i % gridy, rectx, recty, argv[2]->i, argv[3]->i, argv[4]->i);
-
+	c_drawrectangle(screen, argv[0]->i % gridx, argv[1]->i % gridy, argv[2]->i, argv[3]->i, argv[4]->i);
 	return 0;
 }
 
 /* chgrect
-	argv[0]->i --> grid X
-	argv[1]->i --> grid Y */
+argv[0]->i --> grid X
+argv[1]->i --> grid Y */
 int chgrect_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
 {
 	if (argv[0]->i > 0 && argv[0]->i < screenxres) {
@@ -74,8 +85,9 @@ struct loservfd oscserver_init(char *port)
 
 	// add server handlers
 	lo_server_add_method(output.s, "/clear", "iii", clearscreen_handler, NULL);
-	lo_server_add_method(output.s, "/draw", "iiiii", draw_handler, NULL);
 	lo_server_add_method(output.s, "/chgrect", "ii", chgrect_handler, NULL);
+	lo_server_add_method(output.s, "/drawarea","iiiiiii", drawarea_handler, NULL);
+	lo_server_add_method(output.s, "/draw", "iiiii", draw_handler, NULL);
 
 	return output;
 }
