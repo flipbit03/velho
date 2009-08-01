@@ -1,6 +1,6 @@
 # "Velho" Makefile for MINGW/MSYS
 
-# SDL: sdl-config gets installed by the w32-mingw pack.
+# SDL: sdl-config gets installed by the sdl-w32-devel package.
 SDLFLAGS = `sdl-config --cflags`
 SDLLIBS =`sdl-config --libs`
 
@@ -14,13 +14,19 @@ MINGWLIBS = -lws2_32
 # General build opts
 BUILDOPTS = -O2 -Wall -Isrc
 
+# ---- win32 specific ----
+
+# win32 resources (icon/exe description)
+VELHORESOURCEFILE = velhores.rc
+VELHORESOURCEOBJ = velhores.o
+
 # ---- stuff ----
 
 LIBLOSTATIC = /usr/local/lib/liblo.a # LibLO is linked statically.
 
-objects = main.o draw.o oscstuff.o $(LIBLOSTATIC)
+objects = main.o draw.o oscstuff.o  $(VELHORESOURCEOBJ) $(LIBLOSTATIC)
 
-VPATH = src
+VPATH = src win32res
 
 # ---- program ----
 .PHONY: clean all
@@ -31,6 +37,9 @@ velho: $(objects)
 	gcc -o $@ $^ $(SDLLIBS) $(LIBLOLIBS) $(MINGWLIBS)
 	strip $@.exe
 
+$(VELHORESOURCEOBJ): $(VELHORESOURCEFILE)
+	windres $< -o $@
+	
 main.o: main.c oscstuff.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
