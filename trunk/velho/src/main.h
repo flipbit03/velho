@@ -3,7 +3,9 @@
 // Main vars
 extern Uint8 run;
 extern Uint8 autoupdatemode;
-
+extern Uint8 updaterectcount;
+extern SDL_Rect *updaterectlist;
+  
 // LibLO vars/configs
 extern char serverport[5];
 
@@ -18,7 +20,7 @@ extern Uint16 gridx;
 extern Uint16 gridy;
 extern SDL_Surface *screen;
 
-// Functions
+// Functions in main
 void calcgridsize();
 void cleanupandexit();
 

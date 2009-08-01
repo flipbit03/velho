@@ -9,6 +9,23 @@
 
 // OSC Server Handlers
 
+/* updatescreen
+no args
+updates the changed rects while not in "auto update mode" */
+int updatescreen_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
+{
+	c_updatescreen(screen);
+	return 0;
+}
+
+/* setautoupdate
+argv[0]->i --> 1 = yes / ANYTHING ELSE = no */
+int setautoupdate_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
+{
+	c_setautoupdate(screen, argv[0]->i);
+	return 0;
+}
+
 /* clrscr
 argv[0]->i --> R (0-255)
 argv[1]->i --> G (0-255)
@@ -84,6 +101,8 @@ struct loservfd oscserver_init(char *port)
 	}
 
 	// add server handlers
+	lo_server_add_method(output.s, "/updatescreen",	"", updatescreen_handler, NULL);
+	lo_server_add_method(output.s, "/setautoupdate", "i", setautoupdate_handler, NULL);
 	lo_server_add_method(output.s, "/clear", "iii", clearscreen_handler, NULL);
 	lo_server_add_method(output.s, "/chgrect", "ii", chgrect_handler, NULL);
 	lo_server_add_method(output.s, "/drawarea","iiiiiii", drawarea_handler, NULL);
@@ -91,5 +110,3 @@ struct loservfd oscserver_init(char *port)
 
 	return output;
 }
-
-
