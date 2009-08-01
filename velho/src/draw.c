@@ -2,6 +2,38 @@
 
 #include "main.h"
 
+// Internal commands
+static void ci_addtoupdatelist(SDL_Rect newarea)
+{
+	updaterectcount++;
+	updaterectlist = realloc(updaterectlist, updaterectcount * sizeof(SDL_Rect));
+	if (updaterectlist == NULL) {
+		printf("FATAL: Couldn't get memory for rect storage (autoupdatemode off)\n");
+		exit(1);
+	}
+	*(updaterectlist + updaterectcount - 1) = newarea;
+}
+
+// Commands directly tied to OSC
+void c_updatescreen(SDL_Surface *surface) {
+	if (autoupdatemode == 0 && updaterectcount > 0) {
+		SDL_UpdateRects(surface, updaterectcount, updaterectlist);
+		updaterectcount = 0;
+		free(updaterectlist);
+		updaterectlist = NULL;
+	}
+}
+
+void c_setautoupdate(SDL_Surface *surface, Uint8 yesno)
+{
+	if (yesno == 1) {
+		c_updatescreen(surface);
+		autoupdatemode = 1;
+	} else {
+		autoupdatemode = 0;
+	}
+}
+
 void c_drawrectangle(SDL_Surface *surface, Uint16 x, Uint16 y, Uint8 r, Uint8 g, Uint8 b)
 {
 
@@ -12,7 +44,12 @@ void c_drawrectangle(SDL_Surface *surface, Uint16 x, Uint16 y, Uint8 r, Uint8 g,
 	drawrect.h = recty;
 
 	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format, r, g, b));
-	SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
+
+	if (autoupdatemode == 1) {
+		SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
+	} else {
+		ci_addtoupdatelist(drawrect);
+	}
 }
 
 void c_drawarea(SDL_Surface *surface, Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2, Uint8 r, Uint8 g, Uint8 b)
@@ -31,11 +68,28 @@ void c_drawarea(SDL_Surface *surface, Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2
 	}
 
 	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format, r, g, b));
-	SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
+	
+	if (autoupdatemode == 1) {
+		SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
+	} else {
+		ci_addtoupdatelist(drawrect);
+	}
 }
 
 void c_clearscreen(SDL_Surface *surface, Uint8 r, Uint8 g, Uint8 b)
 {
+	SDL_Rect drawrect;
+
+	drawrect.x = 0;
+	drawrect.y = 0;
+	drawrect.w = surface->w;
+	drawrect.h = surface->h;
+
 	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, r, g, b));
-	SDL_UpdateRect(surface, 0, 0, 0, 0);
+	
+	if (autoupdatemode == 1) {
+		SDL_UpdateRect(surface, 0, 0, 0, 0);
+	} else {
+		ci_addtoupdatelist(drawrect);
+	}
 }

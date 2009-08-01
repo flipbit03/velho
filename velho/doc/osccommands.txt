@@ -3,6 +3,14 @@ Velho accepts these commands through OSC:
 i = 32bit integer (OSC Type)
 
 OSC Path	OSC Arg Types	Parameters		Comment
+/setautoupdate 	i		Q?			Sets if each drawing command will update the screen automatically.
+							1 = True / anything else = False.
+							When "Auto Update Mode" is off you need to call "/updatescreen"
+							periodically to update it.
+
+/updatescreen	*none*					Updates the screen if "Auto Update Mode" is off, does nothing if
+							it's on.
+
 /draw		iiiii		X Y R G B		Draws at X-Y position of grid, 
 							using R G B as color.
 

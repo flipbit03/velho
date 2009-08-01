@@ -10,11 +10,13 @@
 #include "oscstuff.h"
 
 #define PROGNAME "Velho"
-#define PROGVERSION "0.7"
+#define PROGVERSION "0.75"
 
 // Main vars/configs
 Uint8 run = 1;
 Uint8 autoupdatemode = 1;
+Uint8 updaterectcount = 0;
+SDL_Rect *updaterectlist = NULL;
 
 // LibLO vars/configs
 char serverport[5] = "7700";
@@ -119,7 +121,7 @@ int main(int argc, char *argv[])
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		printf("Fail.\nFatal: Could not initialize SDL: %s\n",
 		       SDL_GetError());
-		exit(-1);
+		exit(1);
 	} else {
 		printf("Ok.\n");
 	}
@@ -129,7 +131,7 @@ int main(int argc, char *argv[])
 		printf("Going Fullscreen...\nInitializing video mode %dx%d@%dbpp...", screenxres, screenyres, screenbpp);
 		if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE | SDL_FULLSCREEN)) == NULL) {
 			printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-			exit(-1);
+			exit(1);
 		} else {
 			printf("Ok.\n");
 		}
@@ -137,7 +139,7 @@ int main(int argc, char *argv[])
 		printf("Going Windowed...\nInitializing video mode %dx%d@%dbpp...", screenxres, screenyres, screenbpp);
 		if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE)) == NULL) {
 			printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-			exit(-1);
+			exit(1);
 		} else {
 			printf("Ok.\n");
 		}
@@ -166,7 +168,7 @@ int main(int argc, char *argv[])
 								screenxres, screenyres, screenbpp);
 						if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE)) == NULL) {
 							printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-							exit(-1);
+							exit(1);
 						} else {
 							printf("Ok.\n");
 						}
@@ -177,7 +179,7 @@ int main(int argc, char *argv[])
 								screenxres, screenyres, screenbpp);
 						if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE | SDL_FULLSCREEN)) == NULL) {
 							printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-							exit(-1);
+							exit(1);
 						} else {
 							printf("Ok.\n");
 						}
