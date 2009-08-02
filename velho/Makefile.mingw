@@ -24,7 +24,7 @@ VELHORESOURCEOBJ = velhores.o
 
 LIBLOSTATIC = /usr/local/lib/liblo.a # LibLO is linked statically.
 
-objects = main.o draw.o oscstuff.o  $(VELHORESOURCEOBJ) $(LIBLOSTATIC)
+objects = main.o draw.o oscstuff.o varfunc.o $(VELHORESOURCEOBJ) $(LIBLOSTATIC)
 
 VPATH = src win32res
 
@@ -47,6 +47,9 @@ oscstuff.o: oscstuff.c main.h draw.h structs.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
 draw.o: draw.c
+	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
+
+varfunc.o: varfunc.c main.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
 
 clean:
