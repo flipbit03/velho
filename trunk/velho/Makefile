@@ -13,7 +13,7 @@ BUILDOPTS = -O2 -Wall -Isrc
 
 # ---- stuff ----
 
-objects = main.o draw.o oscstuff.o
+objects = main.o draw.o oscstuff.o varfunc.o
 
 VPATH = src
 
@@ -25,13 +25,16 @@ all: velho
 velho: $(objects)
 	gcc -o $@ $^ $(SDLLIBS) $(LIBLOLIBS)
 
-main.o: main.c oscstuff.h
+main.o: main.c oscstuff.h varfunc.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
-oscstuff.o: oscstuff.c main.h draw.h structs.h
+oscstuff.o: oscstuff.c main.h draw.h structs.h varfunc.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
-draw.o: draw.c
+draw.o: draw.c main.h varfunc.h
+	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
+
+varfunc.o: varfunc.c main.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
 
 clean:

@@ -1,23 +1,36 @@
 #include "SDL.h"
 
 #include "main.h"
+#include "varfunc.h"
 
 // Internal commands
 static void ci_addtoupdatelist(SDL_Rect newarea)
 {
-	updaterectcount++;
-	updaterectlist = realloc(updaterectlist, updaterectcount * sizeof(SDL_Rect));
-	if (updaterectlist == NULL) {
-		printf("FATAL: Couldn't get memory for rect storage (autoupdatemode off)\n");
-		exit(1);
+	// don't even bother adding Rects to the update list if we have
+	// to redraw the whole screen.
+	if (manualupdatewhole == 0) {
+		updaterectcount++;
+		updaterectlist = realloc(updaterectlist, updaterectcount * sizeof(SDL_Rect));
+		if (updaterectlist == NULL) {
+			printf("FATAL: Couldn't get memory for rect storage (autoupdatemode off)\n");
+			exit(1);
+		}
+		*(updaterectlist + updaterectcount - 1) = newarea;
 	}
-	*(updaterectlist + updaterectcount - 1) = newarea;
 }
 
 // Commands directly tied to OSC
 void c_updatescreen(SDL_Surface *surface) {
-	if (autoupdatemode == 0 && updaterectcount > 0) {
-		SDL_UpdateRects(surface, updaterectcount, updaterectlist);
+	if (autoupdatemode == 0 && (updaterectcount > 0 || manualupdatewhole == 1)) {
+		// Just update the whole screen if manualupdatewhole==1
+		if (manualupdatewhole == 1) {
+			SDL_UpdateRect(surface, 0, 0, 0, 0);
+			manualupdatewhole = 0;
+		} else {
+			// or update a list of SDL_Rects as usual)
+			SDL_UpdateRects(surface, updaterectcount, updaterectlist);
+		}
+	
 		updaterectcount = 0;
 		free(updaterectlist);
 		updaterectlist = NULL;
@@ -90,6 +103,7 @@ void c_clearscreen(SDL_Surface *surface, Uint8 r, Uint8 g, Uint8 b)
 	if (autoupdatemode == 1) {
 		SDL_UpdateRect(surface, 0, 0, 0, 0);
 	} else {
+		manualupdatewhole = 1;	
 		ci_addtoupdatelist(drawrect);
 	}
 }

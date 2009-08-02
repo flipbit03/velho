@@ -6,6 +6,7 @@
 #include "main.h"
 #include "draw.h"
 #include "structs.h"
+#include "varfunc.h"
 
 // OSC Server Handlers
 
@@ -58,7 +59,7 @@ argv[3]->i --> G (0-255)
 argv[4]->i --> B (0-255) */
 int draw_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
 {
-	c_drawrectangle(screen, argv[0]->i % gridx, argv[1]->i % gridy, argv[2]->i, argv[3]->i, argv[4]->i);
+	c_drawrectangle(screen, argv[0]->i, argv[1]->i, argv[2]->i, argv[3]->i, argv[4]->i);
 	return 0;
 }
 
