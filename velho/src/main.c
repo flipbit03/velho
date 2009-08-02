@@ -8,13 +8,15 @@
 #include "SDL.h"
 
 #include "oscstuff.h"
+#include "varfunc.h"
 
 #define PROGNAME "Velho"
-#define PROGVERSION "0.76"
+#define PROGVERSION "0.77"
 
 // Main vars/configs
 Uint8 run = 1;
 Uint8 autoupdatemode = 1;
+Uint8 manualupdatewhole = 0;
 Uint8 updaterectcount = 0;
 SDL_Rect *updaterectlist = NULL;
 
@@ -32,21 +34,6 @@ Uint16 recty = 40;
 Uint16 gridx = 0;
 Uint16 gridy = 0;
 SDL_Surface *screen;
-
-// grid size calculation
-void calcgridsize()
-{
-	gridx = (screenxres / rectx);
-	gridy = (screenyres / recty);
-}
-
-// velho exit cleanup
-void cleanupandexit()
-{
-	printf("SDL cleanup.\n");
-	SDL_Quit();
-	printf("Velho exiting...\n");
-}
 
 int main(int argc, char *argv[])
 {

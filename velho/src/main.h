@@ -3,6 +3,7 @@
 // Main vars
 extern Uint8 run;
 extern Uint8 autoupdatemode;
+extern Uint8 manualupdatewhole;
 extern Uint8 updaterectcount;
 extern SDL_Rect *updaterectlist;
   
@@ -19,8 +20,4 @@ extern Uint16 recty;
 extern Uint16 gridx;
 extern Uint16 gridy;
 extern SDL_Surface *screen;
-
-// Functions in main
-void calcgridsize();
-void cleanupandexit();
 
