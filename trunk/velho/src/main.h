@@ -14,7 +14,7 @@ extern char serverport[5];
 extern Uint16 screenxres;
 extern Uint16 screenyres;
 extern Uint16 screenbpp;
-extern Uint8 isfullscreen;
+extern Uint8 fullscreen;
 extern Uint16 rectx;
 extern Uint16 recty;
 extern Uint16 gridx;

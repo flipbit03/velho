@@ -64,28 +64,21 @@ int draw_handler(const char *path, const char *types, lo_arg ** argv, int argc, 
 }
 
 /* chgrect
-argv[0]->i --> grid X
-argv[1]->i --> grid Y */
+argv[0]->i --> rect X size
+argv[1]->i --> rect Y size */
 int chgrect_handler(const char *path, const char *types, lo_arg ** argv, int argc, void *data, void *user_data)
 {
-	if (argv[0]->i > 0 && argv[0]->i < screenxres) {
-		rectx = argv[0]->i;
-	}
-
-	if (argv[1]->i > 1 && argv[1]->i < screenyres) {
-		recty = argv[1]->i;
-	}
-
+	rectx = clipvalue(argv[0]->i, 1, screenxres);
+	recty = clipvalue(argv[1]->i, 1, screenyres);
 	calcgridsize();
-
 	return 0;
 }
 
 /* lo_server error handler */
 void error_handler(int num, const char *msg, const char *path)
 {
-	printf("liblo server error %d in path %s: %s\n", num, path, msg);
-	exit(-1);
+	printf("Fatal: LibLO server error %d in path %s: %s\n", num, path, msg);
+	exit(1);
 }
 
 // Main OSC Server init function.
@@ -96,7 +89,7 @@ struct loservfd oscserver_init(char *port)
 	output.s = lo_server_new(port, error_handler);
 	output.fd = lo_server_get_socket_fd(output.s);
 
-        if (!(output.fd > 0)) {
+	if (!(output.fd > 0)) {
                 printf("Fatal: Could not get OSC server's filedescriptor.\n");
                 exit(1);
 	}
@@ -109,5 +102,6 @@ struct loservfd oscserver_init(char *port)
 	lo_server_add_method(output.s, "/drawarea","iiiiiii", drawarea_handler, NULL);
 	lo_server_add_method(output.s, "/draw", "iiiii", draw_handler, NULL);
 
+	printf("[OSC][Init] Ok.\n");
 	return output;
 }
