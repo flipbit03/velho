@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
 			case 'p':
 				optnumber = atoi(optarg);
 				if ((optnumber  > 100) && (optnumber < 65535)) {
-					screenyres = optnumber;
 					snprintf(serverport, 5, "%d", optnumber);
 				} else {
 					printf("Fatal: Getopt Error: -p\n");
