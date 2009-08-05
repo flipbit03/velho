@@ -11,7 +11,7 @@
 #include "varfunc.h"
 
 #define PROGNAME "Velho"
-#define PROGVERSION "0.77"
+#define PROGVERSION "0.79"
 
 // Main vars/configs
 Uint8 run = 1;
@@ -24,11 +24,11 @@ SDL_Rect *updaterectlist = NULL;
 char serverport[5] = "7700";
 
 // SDL vars/configs
-char windowtitle[200];
+char windowtitle[60];
 Uint16 screenxres = 640;
 Uint16 screenyres = 480;
 Uint16 screenbpp = 16;
-Uint8 isfullscreen = 0;
+Uint8 fullscreen = 0;
 Uint16 rectx = 40;
 Uint16 recty = 40;
 Uint16 gridx = 0;
@@ -41,9 +41,7 @@ int main(int argc, char *argv[])
 	SDL_Event myev;
 	int optchar, optnumber;
 
-	// SDL_Quit hook at exit()
-	atexit(cleanupandexit);
-
+	
 	// parse command line arguments
 	while ((optchar = getopt(argc, argv, "hfx:y:p:")) != -1) 
 		switch(optchar) {
@@ -60,12 +58,12 @@ int main(int argc, char *argv[])
 				break;
 			
 			case 'f':
-				isfullscreen=1;
+				fullscreen=1;
 				break;
 
 			case 'x':
 				optnumber = atoi(optarg);
-				if ((optnumber  > 320) && (optnumber < 1920)) {
+				if ((optnumber >= 320) && (optnumber <= 1920)) {
 					screenxres = optnumber;
 				} else {
   					printf("Fatal: Getopt Error: -x\n");
@@ -74,7 +72,7 @@ int main(int argc, char *argv[])
 				break;
 			case 'y':
 				optnumber = atoi(optarg);
-				if ((optnumber  > 240) && (optnumber < 1280)) {
+				if ((optnumber >= 240) && (optnumber <= 1280)) {
 					screenyres = optnumber;
 				} else {
 					printf("Fatal: Getopt Error: -y\n");
@@ -94,16 +92,22 @@ int main(int argc, char *argv[])
 				printf("Fatal: Getopt Error: Unkown option.\n");
 				exit(1);	
 				break;
+			default:
+				/* should never happen */
+				break;
 		}
-
+	
+	// print the actual config.
+	printconfig();
+		
 	// calculate first grid/res ratio/size
 	calcgridsize();
 
-	// create an OSC server
+	// create the OSC server
 	oscsrv = oscserver_init(serverport);
 
 	// initialize SDL
-	printf("Initializing SDL...");
+	printf("[SDL][Init] ");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) == -1) {
 		printf("Fail.\nFatal: Could not initialize SDL: %s\n",
 		       SDL_GetError());
@@ -112,28 +116,16 @@ int main(int argc, char *argv[])
 		printf("Ok.\n");
 	}
 
-	// Get us a screen
-	if (isfullscreen == 1) {
-		printf("Going Fullscreen...\nInitializing video mode %dx%d@%dbpp...", screenxres, screenyres, screenbpp);
-		if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE | SDL_FULLSCREEN)) == NULL) {
-			printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-			exit(1);
-		} else {
-			printf("Ok.\n");
-		}
-	} else {
-		printf("Going Windowed...\nInitializing video mode %dx%d@%dbpp...", screenxres, screenyres, screenbpp);
-		if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE)) == NULL) {
-			printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-			exit(1);
-		} else {
-			printf("Ok.\n");
-		}
-	}
+	// set up cleanup function at exit() (for now SDL_Quit())
+	atexit(cleanupandexit);
+
+	// get us a screen
+	screensetvideomode(0);
 
 	// window title
 	snprintf(windowtitle,sizeof(windowtitle),"%s %s",PROGNAME,PROGVERSION);
 	SDL_WM_SetCaption(windowtitle, NULL);
+
 	// hide pointer
 	SDL_ShowCursor(SDL_DISABLE);
 
@@ -147,36 +139,15 @@ int main(int argc, char *argv[])
 			case SDL_KEYDOWN:
 				// toggle fullscreen
 				if (myev.key.keysym.sym == SDLK_f) {
-					if (isfullscreen) {
-						isfullscreen = 0;
-						SDL_FreeSurface(screen);
-						printf("Going Windowed...\nInitializing video mode %dx%d@%dbpp...", 
-								screenxres, screenyres, screenbpp);
-						if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE)) == NULL) {
-							printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-							exit(1);
-						} else {
-							printf("Ok.\n");
-						}
-					} else {
-						isfullscreen = 1;
-						SDL_FreeSurface(screen);
-						printf("Going Fullscreen...\nInitializing video mode %dx%d@%dbpp...", 
-								screenxres, screenyres, screenbpp);
-						if ((screen = SDL_SetVideoMode(screenxres, screenyres, screenbpp, SDL_SWSURFACE | SDL_FULLSCREEN)) == NULL) {
-							printf("Fail.\nFatal: Could not initialize SDL video mode : %s\n",SDL_GetError());
-							exit(1);
-						} else {
-							printf("Ok.\n");
-						}
-					}
+					togglefullscreen();
+					screensetvideomode(1);
 				}	
 
 				// quit
-				if (myev.key.keysym.sym == SDLK_q) {
+				if (myev.key.keysym.sym == SDLK_q)
 					run = 0;
-				}
 				break;
+
 			case SDL_QUIT:
 				// quit the program.
 				run =0;

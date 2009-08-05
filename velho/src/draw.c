@@ -51,12 +51,13 @@ void c_drawrectangle(SDL_Surface *surface, Uint16 x, Uint16 y, Uint8 r, Uint8 g,
 {
 
 	SDL_Rect drawrect;
-	drawrect.x = x * rectx;
-	drawrect.y = y * recty;
+	drawrect.x = clipvalue(x,0,gridx-1) * rectx;
+	drawrect.y = clipvalue(y,0,gridy-1) * recty;
 	drawrect.w = rectx;
 	drawrect.h = recty;
 
-	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format, r, g, b));
+	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format,
+		clipvalue(r, 0, 255), clipvalue(g, 0, 255), clipvalue(b, 0, 255)));
 
 	if (autoupdatemode == 1) {
 		SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
@@ -67,6 +68,11 @@ void c_drawrectangle(SDL_Surface *surface, Uint16 x, Uint16 y, Uint8 r, Uint8 g,
 
 void c_drawarea(SDL_Surface *surface, Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2, Uint8 r, Uint8 g, Uint8 b)
 {
+	x1 = clipvalue(x1,0,gridx-1);
+	y1 = clipvalue(y1,0,gridy-1);
+	x2 = clipvalue(x2,0,gridx-1);
+	y2 = clipvalue(y2,0,gridy-1);
+
 	SDL_Rect drawrect;
 	if((x1 <= x2) && (y1 <= y2)) {
 		drawrect.x = x1 * rectx;
@@ -80,7 +86,8 @@ void c_drawarea(SDL_Surface *surface, Uint16 x1, Uint16 y1, Uint16 x2, Uint16 y2
 		drawrect.h = (abs(y2 - y1)+1) * recty;
 	}
 
-	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format, r, g, b));
+	SDL_FillRect(surface, &drawrect, SDL_MapRGB(surface->format,
+		clipvalue(r, 0, 255), clipvalue(g, 0, 255), clipvalue(b, 0, 255)));
 	
 	if (autoupdatemode == 1) {
 		SDL_UpdateRect(surface, drawrect.x, drawrect.y, drawrect.w, drawrect.h);
@@ -98,8 +105,9 @@ void c_clearscreen(SDL_Surface *surface, Uint8 r, Uint8 g, Uint8 b)
 	drawrect.w = surface->w;
 	drawrect.h = surface->h;
 
-	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, r, g, b));
-	
+	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format,
+		clipvalue(r, 0, 255), clipvalue(g, 0, 255), clipvalue(b, 0, 255)));
+
 	if (autoupdatemode == 1) {
 		SDL_UpdateRect(surface, 0, 0, 0, 0);
 	} else {
