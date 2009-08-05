@@ -26,7 +26,7 @@ LIBLOSTATIC = /usr/local/lib/liblo.a # LibLO is linked statically.
 
 objects = main.o draw.o oscstuff.o varfunc.o $(VELHORESOURCEOBJ) $(LIBLOSTATIC)
 
-VPATH = src win32res
+VPATH = src win32
 
 # ---- program ----
 .PHONY: clean all
