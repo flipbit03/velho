@@ -1,4 +1,7 @@
-# "Velho" Makefile for Linux/Unix
+# Velho, network-enabled graphic drawing application.
+# Copyright (C) 2009 Carlos Eduardo C. B. Shinagawa <cadu.coelho@gmail.com>
+
+# Makefile for Linux/Unix
 
 # SDL
 SDLFLAGS = `sdl-config --cflags`
@@ -25,7 +28,7 @@ all: velho
 velho: $(objects)
 	gcc -o $@ $^ $(SDLLIBS) $(LIBLOLIBS)
 
-main.o: main.c oscstuff.h varfunc.h
+main.o: main.c oscstuff.h varfunc.h configs.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
 oscstuff.o: oscstuff.c main.h draw.h structs.h varfunc.h

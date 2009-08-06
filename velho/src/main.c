@@ -1,3 +1,21 @@
+/*
+ * Velho, a network-enabled graphic drawing application.
+ * Copyright (C) 2009 Carlos Eduardo C. B. Shinagawa <cadu.coelho@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -10,8 +28,7 @@
 #include "oscstuff.h"
 #include "varfunc.h"
 
-#define PROGNAME "Velho"
-#define PROGVERSION "0.79"
+#include "configs.h"
 
 // Main vars/configs
 Uint8 run = 1;
@@ -46,9 +63,8 @@ int main(int argc, char *argv[])
 	while ((optchar = getopt(argc, argv, "hfx:y:p:")) != -1) 
 		switch(optchar) {
 			case 'h':
-				printf("%s %s: Simple remote graphics display using SDL and OSC.\n",PROGNAME,PROGVERSION);
-				printf("author: Cadu (cadu.coelho@gmail.com)\n\n");
-				printf("Command line options:\n");
+				printvelhover();
+				printf("\nCommand line options:\n");
 				printf("\t-h\tShow this help.\n");
 				printf("\t-f\tStart in fullscreen mode.\n");
 				printf("\t-x val\tSet X resolution to \"val\" (320..1920).\n");
@@ -81,7 +97,7 @@ int main(int argc, char *argv[])
 				break;
 			case 'p':
 				optnumber = atoi(optarg);
-				if ((optnumber  > 100) && (optnumber < 65535)) {
+				if ((optnumber  >= 100) && (optnumber <= 65535)) {
 					snprintf(serverport, 5, "%d", optnumber);
 				} else {
 					printf("Fatal: Getopt Error: -p\n");
@@ -96,7 +112,10 @@ int main(int argc, char *argv[])
 				/* should never happen */
 				break;
 		}
-	
+
+	// print version
+	printvelhover();
+
 	// print the actual config.
 	printconfig();
 		

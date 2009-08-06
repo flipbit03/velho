@@ -1,4 +1,7 @@
-# "Velho" Makefile for MINGW/MSYS
+# Velho, network-enabled graphic drawing application.
+# Copyright (C) 2009 Carlos Eduardo C. B. Shinagawa <cadu.coelho@gmail.com>
+
+# Makefile for MINGW+MSYS
 
 # SDL: sdl-config gets installed by the sdl-w32-devel package.
 SDLFLAGS = `sdl-config --cflags`
@@ -40,13 +43,13 @@ velho: $(objects)
 $(VELHORESOURCEOBJ): $(VELHORESOURCEFILE)
 	windres $< -o $@
 	
-main.o: main.c oscstuff.h
+main.o: main.c oscstuff.h varfunc.h configs.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
-oscstuff.o: oscstuff.c main.h draw.h structs.h
+oscstuff.o: oscstuff.c main.h draw.h structs.h varfunc.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS) $(LIBLOFLAGS)
 
-draw.o: draw.c
+draw.o: draw.c main.h varfunc.h
 	gcc -o $@ -c $< $(BUILDOPTS) $(SDLFLAGS)
 
 varfunc.o: varfunc.c main.h
