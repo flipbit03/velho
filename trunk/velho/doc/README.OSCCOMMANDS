@@ -1,3 +1,7 @@
+Velho, a network-enabled graphic drawing application.
+Copyright (C) 2009 Carlos Eduardo C. B. Shinagawa <cadu.coelho@gmail.com>
+--------------------------------------------------------------------------
+
 Velho accepts these commands through OSC:
 
 i = 32bit integer (OSC Type)
